@@ -14,8 +14,14 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
+    "noUnusedLocals": true,
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@models/*": ["src/shared/models/*"],
+      "@configs/*": ["src/shared/infra/environment/*"],
+      "@common/*": ["src/shared/common/*"]
+    }
   }
 }
