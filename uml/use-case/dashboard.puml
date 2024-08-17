@@ -1,0 +1,59 @@
+@startuml dashboard
+left to right direction
+
+actor "Admin" as admin
+actor "Teacher" as teacher
+actor "Student" as student
+
+rectangle dashboard as "E-learning Dashboard" {
+  usecase "Manage Users" as users
+  usecase "Manage Roles" as roles
+  usecase "Manage Teachers" as teachers
+
+  rectangle classrooms as "Classrooms" {
+    usecase "Manage Students" as students
+    usecase "Manage Lessons" as lessons
+    usecase "Manage Question Banks" as question_banks
+    usecase "Manage Finance" as finance
+    usecase "Manage Assignments" as assignments
+    usecase "Manage Schedules" as schedules
+    usecase "Manage Rooms" as rooms
+    usecase "Manage Grades" as grades
+    usecase "Manage Tests" as tests
+    usecase "Check Attendance" as attendance
+
+    rectangle preview as "Preview" {
+      usecase "View Schedule" as schedule
+      usecase "View Lesson" as lesson
+      usecase "View Tuition" as tuition
+      usecase "View Grade" as grade
+      usecase "Take the test" as test
+    } 
+  }
+}
+
+admin --> users
+admin --> roles
+admin --> teachers
+admin --> classrooms
+
+teacher --> question_banks
+teacher --> lessons
+teacher --> students
+teacher --> finance
+teacher --> attendance
+teacher --> rooms
+teacher --> schedules
+teacher --> assignments
+teacher --> grades
+teacher --> preview
+teacher --> tests
+
+student --> assignments
+student --> lesson
+student --> tuition
+student --> schedule
+student --> grade
+student --> test
+
+@enduml
