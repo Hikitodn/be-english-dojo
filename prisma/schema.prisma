@@ -1,7 +1,7 @@
 generator kysely {
-    provider = "prisma-kysely"
-    output = "../src/shared/common"
-    fileName = "types.ts"
+  provider = "prisma-kysely"
+  output   = "../src/shared/common"
+  fileName = "types.ts"
 }
 
 datasource db {
@@ -10,79 +10,87 @@ datasource db {
 }
 
 model users {
-  id    Int                       @id @default(autoincrement())
-  email String                    @unique
-  first_name String
-  last_name String
-  is_verified Boolean             @default(false)
-  avatar_url String?
-  role roles?
-  access_token access_tokens[]
+  id            Int              @id @default(autoincrement())
+  email         String           @unique
+  password      String
+  first_name    String
+  last_name     String
+  is_verified   Boolean          @default(false)
+  avatar_url    String?
+  user_role     user_roles[]
+  access_token  access_tokens[]
   refresh_token refresh_tokens[]
-  profile profiles?
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime
+  profile       profiles?
+  created_at    DateTime         @default(now())
+  updated_at    DateTime         @updatedAt
+  deleted_at    DateTime?
+}
+
+model user_roles {
+  id      Int   @id @default(autoincrement())
+  user    users @relation(fields: [user_id], references: [id])
+  user_id Int
+  role    roles @relation(fields: [role_id], references: [id])
+  role_id Int
 }
 
 model access_tokens {
-  id Int                          @id @default(autoincrement())
-  expired_at DateTime
-  created_at DateTime
-  user users                      @relation(fields: [user_id], references: [id])
-  user_id Int
+  id            Int              @id @default(autoincrement())
+  expired_at    DateTime
+  created_at    DateTime         @default(now())
+  user          users            @relation(fields: [user_id], references: [id])
+  user_id       Int
   refresh_token refresh_tokens[]
 }
 
 model refresh_tokens {
-  id Int                          @id @default(autoincrement())
-  expired_at DateTime
-  created_at DateTime
-  user users                      @relation(fields: [user_id], references: [id])
-  user_id Int
-  access_token access_tokens      @relation(fields: [access_token_id], references: [id])
+  id              Int           @id @default(autoincrement())
+  expired_at      DateTime
+  created_at      DateTime      @default(now())
+  user            users         @relation(fields: [user_id], references: [id])
+  user_id         Int
+  access_token    access_tokens @relation(fields: [access_token_id], references: [id])
   access_token_id Int
 }
 
 model roles {
-  id Int                          @id @default(autoincrement())
-  name Role                       @default(STUDENT)
-  user users                      @relation(fields: [user_id], references: [id])
-  user_id Int                     @unique
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime
+  id              Int                @id @default(autoincrement())
+  name            Role               @default(STUDENT)
+  created_at      DateTime           @default(now())
+  updated_at      DateTime           @updatedAt
+  deleted_at      DateTime?
+  user_role       user_roles[]
   role_permission role_permissions[]
 }
 
 model profiles {
-  id Int                          @id @default(autoincrement())
-  phone_number String?
+  id            Int       @id @default(autoincrement())
+  phone_number  String?
   date_of_birth DateTime
-  gender Gender
-  address String?
-  social_links Json?
-  user users                      @relation(fields: [user_id], references: [id])
-  user_id Int                     @unique
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime
+  gender        Gender
+  address       String?
+  social_links  Json?
+  user          users     @relation(fields: [user_id], references: [id])
+  user_id       Int       @unique
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  deleted_at    DateTime?
 }
 
 model permissions {
-  id Int                          @id @default(autoincrement())
-  name String
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime
+  id              Int                @id @default(autoincrement())
+  name            String
+  created_at      DateTime           @default(now())
+  updated_at      DateTime           @updatedAt
+  deleted_at      DateTime?
   role_permission role_permissions[]
 }
 
 model role_permissions {
-  id Int                          @id @default(autoincrement())
-  role roles                      @relation(fields: [role_id], references: [id])
-  role_id Int
-  permission permissions          @relation(fields: [permission_id], references: [id])
+  id            Int         @id @default(autoincrement())
+  role          roles       @relation(fields: [role_id], references: [id])
+  role_id       Int
+  permission    permissions @relation(fields: [permission_id], references: [id])
   permission_id Int
 }
 

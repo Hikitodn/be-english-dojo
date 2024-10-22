@@ -6,6 +6,7 @@ import helmet from 'helmet';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(helmet());
+  app.setGlobalPrefix('api');
   await app.listen(app.get(AppConfigService).getAppPort());
 }
 bootstrap();
