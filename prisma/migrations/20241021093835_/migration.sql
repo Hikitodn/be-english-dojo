@@ -1,0 +1,21 @@
+-- AlterTable
+ALTER TABLE "access_tokens" ALTER COLUMN "created_at" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "permissions" ALTER COLUMN "created_at" SET DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "deleted_at" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "profiles" ALTER COLUMN "created_at" SET DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "deleted_at" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "refresh_tokens" ALTER COLUMN "created_at" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "roles" ALTER COLUMN "created_at" SET DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "deleted_at" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "users" ALTER COLUMN "created_at" SET DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "deleted_at" DROP NOT NULL;

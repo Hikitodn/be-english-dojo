@@ -12,3 +12,10 @@ export interface IAppConfig {
   getAppName(): string;
   getAppPort(): number;
 }
+
+export interface IJwtConfig {
+  getAccessTokenSecret(): string;
+  getAccessTokenExpireTime(): number;
+  getRefreshTokenSecret(): string;
+  getRefreshTokenExpireTime(): number;
+}
