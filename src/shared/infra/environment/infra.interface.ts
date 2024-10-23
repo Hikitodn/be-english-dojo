@@ -19,3 +19,19 @@ export interface IJwtConfig {
   getRefreshTokenSecret(): string;
   getRefreshTokenExpireTime(): number;
 }
+
+export interface IRedisConfig {
+  getRedisHost(): string;
+  getRedisPort(): number;
+}
+
+export interface IMailConfig {
+  getMailHost(): string;
+  getMailPort(): number;
+  getMailUsername(): string;
+  getMailPassword(): string;
+  getMailFrom(): string;
+  getMailURL(): string;
+  getMailSecret(): string;
+  getMailExpireTime(): number;
+}

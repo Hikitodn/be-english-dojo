@@ -1,4 +1,4 @@
-import { ROLE } from '@common/enums';
+import { Role } from '@common/types';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
@@ -19,5 +19,5 @@ export class UserDTO {
   avatar_url: string;
 
   @Expose()
-  role: ROLE;
+  role: Role;
 }
