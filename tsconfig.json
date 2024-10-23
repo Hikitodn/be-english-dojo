@@ -19,7 +19,6 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@models/*": ["src/shared/models/*"],
       "@configs/*": ["src/shared/infra/environment/*"],
       "@common/*": ["src/shared/common/*"]
     }

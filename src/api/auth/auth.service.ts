@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { UserRepository } from '../user/user.repository';
 import { LoginDTO } from './dto/login.dto';
 import { JwtPayload } from '@common/intefaces';
@@ -6,9 +10,14 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtConfigService } from '@configs/jwt/jwt.service';
 import { TokenDTO } from './dto/token.dto';
 import { plainToInstance } from 'class-transformer';
-import { BEARER } from '@common/constants';
+import { BEARER, SALT_ROUNDS } from '@common/constants';
 import { AuthRepository } from './auth.repository';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDTO } from '../user/dto/create_user.dto';
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
+import { MailService } from '../mail/mail.service';
+import { current_datetime, forward_datetime } from '@common/helper';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +26,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
     private readonly authRepository: AuthRepository,
+    private readonly mailService: MailService,
+    @InjectQueue('mail-queue') private mailQueue: Queue,
   ) {}
 
   async login(loginDTO: LoginDTO): Promise<TokenDTO> {
@@ -30,6 +41,41 @@ export class AuthService {
     this.save_token(user.id);
 
     return await this.generate_token(user.id);
+  }
+
+  async register(createUserDTO: CreateUserDTO): Promise<void> {
+    if (await this.userRepository.find_user_by_email(createUserDTO.email))
+      throw new UnprocessableEntityException();
+
+    const hash_password = await bcrypt.hash(
+      createUserDTO.password,
+      SALT_ROUNDS,
+    );
+
+    createUserDTO.password = hash_password;
+
+    const user = await this.userRepository.insert_user({
+      email: createUserDTO.email,
+      password: createUserDTO.password,
+      first_name: createUserDTO.first_name,
+      last_name: createUserDTO.last_name,
+      updated_at: current_datetime(),
+    });
+
+    this.userRepository.insert_profile({
+      phone_number: createUserDTO.phone_number,
+      date_of_birth: createUserDTO.date_of_birth,
+      gender: createUserDTO.gender,
+      user_id: user.id,
+      updated_at: current_datetime(),
+    });
+
+    const data = await this.mailService.generate_mail_data({
+      sub: user.id.toString(),
+      aud: user.email,
+    });
+
+    await this.mailQueue.add('send-verify-mail', data);
   }
 
   async generate_token(user_id: number): Promise<TokenDTO> {
@@ -48,24 +94,24 @@ export class AuthService {
   }
 
   async save_token(user_id: number): Promise<void> {
-    const access_token_expire_time = new Date(
-      Date.now() + this.jwtConfigService.getAccessTokenExpireTime() * 1000,
+    const access_token_expire_time = forward_datetime(
+      this.jwtConfigService.getAccessTokenExpireTime(),
     );
 
-    const refresh_token_expire_time = new Date(
-      Date.now() + this.jwtConfigService.getRefreshTokenExpireTime() * 1000,
+    const refresh_token_expire_time = forward_datetime(
+      this.jwtConfigService.getRefreshTokenExpireTime(),
     );
 
-    const access_token = await this.authRepository.insert_access_token(
-      user_id,
-      access_token_expire_time,
-    );
+    const access_token = await this.authRepository.insert_access_token({
+      user_id: user_id,
+      expired_at: access_token_expire_time,
+    });
 
-    this.authRepository.insert_refresh_token(
-      user_id,
-      access_token.id,
-      refresh_token_expire_time,
-    );
+    this.authRepository.insert_refresh_token({
+      user_id: user_id,
+      access_token_id: access_token.id,
+      expired_at: refresh_token_expire_time,
+    });
   }
 
   async generate_access_token(payload: JwtPayload): Promise<object> {

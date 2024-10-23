@@ -4,17 +4,17 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
-import { UserService } from 'src/api/user/user.service';
 import { BadRequestExceptionFilter } from './filter/bad_request.filter';
 import { ForbiddenExceptionFilter } from './filter/forbidden.filter';
 import { NotFoundExceptionFilter } from './filter/not_found.filter';
 import { UnauthorizedExceptionFilter } from './filter/unauthorized.filter';
 import { InternalServerExceptionFilter } from './filter/internal_server_error.filter';
 import { ValidationError } from 'class-validator';
+import { ErrorService } from './error.service';
 
 @Module({
   providers: [
-    UserService,
+    ErrorService,
     {
       provide: APP_FILTER,
       useClass: BadRequestExceptionFilter,
