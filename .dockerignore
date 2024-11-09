@@ -1,0 +1,18 @@
+Dockerfile
+README.md
+.dockerignore
+.git
+dist
+
+# zero-installs
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# root workspace
+!package.json
+!yarn.lock
