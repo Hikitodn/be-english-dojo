@@ -17,7 +17,7 @@ import { CreateUserDTO } from '../user/dto/create_user.dto';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import { MailService } from '../mail/mail.service';
-import { current_datetime, forward_datetime } from '@common/helper';
+import { current_datetime, forward_current_datetime } from '@common/helper';
 
 @Injectable()
 export class AuthService {
@@ -94,11 +94,11 @@ export class AuthService {
   }
 
   async save_token(user_id: number): Promise<void> {
-    const access_token_expire_time = forward_datetime(
+    const access_token_expire_time = forward_current_datetime(
       this.jwtConfigService.getAccessTokenExpireTime(),
     );
 
-    const refresh_token_expire_time = forward_datetime(
+    const refresh_token_expire_time = forward_current_datetime(
       this.jwtConfigService.getRefreshTokenExpireTime(),
     );
 

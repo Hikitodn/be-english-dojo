@@ -30,7 +30,7 @@ export class MailService {
     };
   }
 
-  async verify(token: string) {
+  async verify(token: string): Promise<void> {
     let sub;
 
     try {

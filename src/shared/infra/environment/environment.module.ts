@@ -11,13 +11,11 @@ import redisConfig from 'src/shared/config/redis.config';
 import mailConfig from 'src/shared/config/mail.config';
 import { MailConfigModule } from './mail/mail.module';
 
-const ENV = process.env.NODE_ENV;
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [appConfig, databaseConfig, jwtConfig, redisConfig, mailConfig],
-      envFilePath: ['.env', `.env.${ENV}`],
+      envFilePath: ['.env'],
     }),
     AppConfigModule,
     DatabaseConfigModule,
