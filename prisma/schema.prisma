@@ -10,57 +10,63 @@ datasource db {
 }
 
 model users {
-  id            Int              @id @default(autoincrement())
-  email         String           @unique
-  password      String
-  first_name    String
-  last_name     String
-  is_verified   Boolean          @default(false)
-  avatar_url    String?
-  user_role     user_roles[]
-  access_token  access_tokens[]
-  refresh_token refresh_tokens[]
-  profile       profiles?
-  created_at    DateTime         @default(now())
-  updated_at    DateTime         @updatedAt
-  deleted_at    DateTime?
+  id                Int                 @id @default(autoincrement())
+  email             String              @unique
+  password          String
+  first_name        String
+  last_name         String
+  is_verified       Boolean             @default(false)
+  avatar_url        String?
+  user_roles        user_roles[]
+  access_tokens     access_tokens[]
+  refresh_tokens    refresh_tokens[]
+  tuition_histories tuition_histories[]
+  attendances       attendances[]
+  profiles          profiles?
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @default(now()) @updatedAt
+  deleted_at        DateTime?
+  user_students     user_classrooms[]   @relation("user_students")
+  user_teachers     user_classrooms[]   @relation("user_teachers")
 }
 
 model user_roles {
-  id      Int   @id @default(autoincrement())
-  user    users @relation(fields: [user_id], references: [id])
-  user_id Int
-  role    roles @relation(fields: [role_id], references: [id])
-  role_id Int
+  id         Int      @id @default(autoincrement())
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user_id    Int
+  roles      roles    @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  role_id    Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 }
 
 model access_tokens {
-  id            Int              @id @default(autoincrement())
-  expired_at    DateTime
-  created_at    DateTime         @default(now())
-  user          users            @relation(fields: [user_id], references: [id])
-  user_id       Int
-  refresh_token refresh_tokens[]
+  id             Int              @id @default(autoincrement())
+  expired_at     DateTime
+  created_at     DateTime         @default(now())
+  users          users            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id        Int
+  refresh_tokens refresh_tokens[]
 }
 
 model refresh_tokens {
   id              Int           @id @default(autoincrement())
   expired_at      DateTime
   created_at      DateTime      @default(now())
-  user            users         @relation(fields: [user_id], references: [id])
+  users           users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id         Int
-  access_token    access_tokens @relation(fields: [access_token_id], references: [id])
+  access_tokens   access_tokens @relation(fields: [access_token_id], references: [id], onDelete: Cascade)
   access_token_id Int
 }
 
 model roles {
-  id              Int                @id @default(autoincrement())
-  name            Role               @default(STUDENT)
-  created_at      DateTime           @default(now())
-  updated_at      DateTime           @updatedAt
-  deleted_at      DateTime?
-  user_role       user_roles[]
-  role_permission role_permissions[]
+  id               Int                @id @default(autoincrement())
+  name             Role
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @default(now()) @updatedAt
+  deleted_at       DateTime?
+  user_roles       user_roles[]
+  role_permissions role_permissions[]
 }
 
 model profiles {
@@ -69,29 +75,176 @@ model profiles {
   date_of_birth DateTime
   gender        Gender
   address       String?
-  social_links  Json?
-  user          users     @relation(fields: [user_id], references: [id])
+  social_links  String[]
+  users         users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id       Int       @unique
   created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
+  updated_at    DateTime  @default(now()) @updatedAt
   deleted_at    DateTime?
 }
 
 model permissions {
-  id              Int                @id @default(autoincrement())
-  name            String
-  created_at      DateTime           @default(now())
-  updated_at      DateTime           @updatedAt
-  deleted_at      DateTime?
-  role_permission role_permissions[]
+  id               Int                @id @default(autoincrement())
+  name             String
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @default(now()) @updatedAt
+  deleted_at       DateTime?
+  role_permissions role_permissions[]
 }
 
 model role_permissions {
   id            Int         @id @default(autoincrement())
-  role          roles       @relation(fields: [role_id], references: [id])
+  roles         roles       @relation(fields: [role_id], references: [id])
   role_id       Int
-  permission    permissions @relation(fields: [permission_id], references: [id])
+  permissions   permissions @relation(fields: [permission_id], references: [id])
   permission_id Int
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @default(now()) @updatedAt
+}
+
+model classrooms {
+  id                Int                 @id @default(autoincrement())
+  code              String              @unique @db.Char(6)
+  name              String
+  capacity          Int
+  background_url    String?
+  tuition_fee       Decimal             @db.Money
+  start_date        DateTime
+  end_date          DateTime
+  total_student     Int                 @default(0)
+  total_teacher     Int                 @default(1)
+  schedules         schedules[]
+  user_classrooms   user_classrooms[]
+  tuition_histories tuition_histories[]
+  attendances       attendances[]
+  lessons           lessons[]
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @default(now()) @updatedAt
+  deleted_at        DateTime?
+}
+
+model user_classrooms {
+  id           Int            @id @default(autoincrement())
+  classrooms   classrooms?    @relation(fields: [classroom_id], references: [id])
+  classroom_id Int?
+  students     users?         @relation("user_students", fields: [student_id], references: [id])
+  student_id   Int?
+  teachers     users?         @relation("user_teachers", fields: [teacher_id], references: [id])
+  teacher_id   Int?
+  absent_count Int            @default(0)
+  status       StudentStatus?
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @default(now()) @updatedAt
+}
+
+model tuition_histories {
+  id           Int           @id @default(autoincrement())
+  amount       Decimal       @db.Money
+  paid_date    DateTime
+  status       PaymentStatus
+  method       PaymentMethod
+  note         String?
+  classrooms   classrooms    @relation(fields: [classroom_id], references: [id])
+  classroom_id Int
+  users        users         @relation(fields: [user_id], references: [id])
+  user_id      Int
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @default(now()) @updatedAt
+  payments     payments[]
+}
+
+model payments {
+  id                 Int               @id @default(autoincrement())
+  order_id           String
+  transaction        Json?
+  tuition_histories  tuition_histories @relation(fields: [tuition_history_id], references: [id])
+  tuition_history_id Int
+}
+
+model schedules {
+  id           Int        @id @default(autoincrement())
+  day_of_week  Int
+  start_time   String
+  end_time     String
+  classrooms   classrooms @relation(fields: [classroom_id], references: [id], onDelete: Cascade)
+  classroom_id Int
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @default(now()) @updatedAt
+}
+
+model attendances {
+  id           Int              @id @default(autoincrement())
+  status       AttendanceStatus
+  users        users?           @relation(fields: [user_id], references: [id])
+  user_id      Int?
+  classrooms   classrooms?      @relation(fields: [classroom_id], references: [id])
+  classroom_id Int?
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @default(now()) @updatedAt
+}
+
+model lessons {
+  id               Int                @id @default(autoincrement())
+  topic            String?
+  note             String?
+  lesson_resources lesson_resources[]
+  tests            tests[]
+  classrooms       classrooms         @relation(fields: [classroom_id], references: [id])
+  classroom_id     Int
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @default(now()) @updatedAt
+}
+
+model lesson_resources {
+  id         Int      @id @default(autoincrement())
+  name       String
+  type       String
+  url        String
+  lessons    lessons  @relation(fields: [lesson_id], references: [id])
+  lesson_id  Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model tests {
+  id             Int              @id @default(autoincrement())
+  name           String
+  description    String?
+  lessons        lessons          @relation(fields: [lesson_id], references: [id])
+  lesson_id      Int
+  test_questions test_questions[]
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @default(now()) @updatedAt
+}
+
+model test_questions {
+  id          Int       @id @default(autoincrement())
+  questions   questions @relation(fields: [question_id], references: [id])
+  question_id Int
+  tests       tests     @relation(fields: [test_id], references: [id])
+  test_id     Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now()) @updatedAt
+}
+
+model questions {
+  id              Int                @id @default(autoincrement())
+  text            String
+  question_option question_options[]
+  test_questions  test_questions[]
+  created_at      DateTime           @default(now())
+  updated_at      DateTime           @default(now()) @updatedAt
+}
+
+model question_options {
+  id          Int       @id @default(autoincrement())
+  text        String
+  file_url    String?
+  is_correct  Boolean
+  questions   questions @relation(fields: [question_id], references: [id], onUpdate: Cascade)
+  question_id Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now()) @updatedAt
 }
 
 enum Role {
@@ -101,6 +254,29 @@ enum Role {
 }
 
 enum Gender {
-  Male
-  Female
+  MALE
+  FEMALE
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  FAILED
+}
+
+enum PaymentMethod {
+  COD
+  PAYPAL
+}
+
+enum StudentStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
 }

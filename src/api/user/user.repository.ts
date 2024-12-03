@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Database } from '@common/database';
 import { Insertable } from 'kysely';
-import { profiles, users } from '@common/types';
+import { profiles, user_roles, users } from '@common/types';
 
 @Injectable()
 export class UserRepository {
@@ -37,7 +37,7 @@ export class UserRepository {
     return await this.db
       .insertInto('users')
       .values(user)
-      .returningAll()
+      .returning(['id', 'email'])
       .executeTakeFirstOrThrow();
   }
 
@@ -47,5 +47,32 @@ export class UserRepository {
       .values(profile)
       .returningAll()
       .executeTakeFirstOrThrow();
+  }
+
+  async insert_user_role(user_role: Insertable<user_roles>) {
+    return await this.db
+      .insertInto('user_roles')
+      .values(user_role)
+      .returningAll()
+      .executeTakeFirstOrThrow();
+  }
+
+  async find_user_role(id: number) {
+    return await this.db
+      .selectFrom('user_roles')
+      .innerJoin('roles', 'roles.id', 'user_roles.role_id')
+      .innerJoin('users', 'users.id', 'user_roles.user_id')
+      .select('roles.name')
+      .where('users.id', '=', id)
+      .executeTakeFirst();
+  }
+
+  async find_user_profile_by_user_id(id: number) {
+    return await this.db
+      .selectFrom('users')
+      .innerJoin('profiles', 'users.id', 'profiles.user_id')
+      .selectAll()
+      .where('users.id', '=', id)
+      .executeTakeFirst();
   }
 }

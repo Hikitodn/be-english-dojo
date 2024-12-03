@@ -7,26 +7,26 @@ export class DatabaseConfigService implements IDatabaseConfig {
   constructor(private configService: ConfigService) {}
 
   public getDatabaseType(): string {
-    return this.configService.getOrThrow<string>('database.type');
+    return this.configService.getOrThrow('database.type');
   }
 
   public getDatabaseHost(): string {
-    return this.configService.getOrThrow<string>('database.host');
+    return this.configService.getOrThrow('database.host');
   }
 
   public getDatabasePort(): number {
-    return this.configService.getOrThrow<number>('database.port');
+    return +this.configService.getOrThrow('database.port');
   }
 
   public getDatabaseUser(): string {
-    return this.configService.getOrThrow<string>('database.user');
+    return this.configService.getOrThrow('database.user');
   }
 
   public getDatabasePassword(): string {
-    return this.configService.getOrThrow<string>('database.password');
+    return this.configService.getOrThrow('database.password');
   }
 
   public getDatabaseName(): string {
-    return this.configService.getOrThrow<string>('database.name');
+    return this.configService.getOrThrow('database.name');
   }
 }

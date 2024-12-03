@@ -8,12 +8,26 @@ import { RedisConfigService } from '@configs/redis/redis.service';
     BullModule.forRootAsync({
       imports: [RedisConfigModule],
       inject: [RedisConfigService],
-      useFactory: async (redisConfigService: RedisConfigService) => ({
-        connection: {
-          host: redisConfigService.getRedisHost(),
-          port: redisConfigService.getRedisPort(),
-        },
-      }),
+      useFactory: async (redisConfigService: RedisConfigService) =>
+        process.env.NODE_ENV === 'production'
+          ? {
+              connection: {
+                host: redisConfigService.getRedisHost(),
+                port: redisConfigService.getRedisPort(),
+                password: redisConfigService.getRedisPassword(),
+                url: redisConfigService.getRedisURL(),
+                tls: {
+                  rejectUnauthorized: false,
+                  requestCert: true,
+                },
+              },
+            }
+          : {
+              connection: {
+                host: redisConfigService.getRedisHost(),
+                port: redisConfigService.getRedisPort(),
+              },
+            },
     }),
   ],
 })

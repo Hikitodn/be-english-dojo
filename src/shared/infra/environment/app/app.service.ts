@@ -7,14 +7,14 @@ export class AppConfigService implements IAppConfig {
   constructor(private configService: ConfigService) {}
 
   public getAppURL(): string {
-    return this.configService.getOrThrow<string>('app.url');
+    return this.configService.getOrThrow('app.url');
   }
 
   public getAppName(): string {
-    return this.configService.getOrThrow<string>('app.name');
+    return this.configService.getOrThrow('app.name');
   }
 
   public getAppPort(): number {
-    return this.configService.getOrThrow<number>('app.port');
+    return +this.configService.getOrThrow('app.port');
   }
 }

@@ -1,0 +1,10 @@
+export { default as ClassroomDTO } from './classroom.dto';
+export { default as ClassroomDetailDTO } from './classroom_detail.dto';
+export { default as CreateClassroomDTO } from './create_classroom.dto';
+export { default as QuestionBankDTO } from './question_bank.dto';
+export { default as CreateQuestionOptionDTO } from './create_question_option.dto';
+export { default as ScheduleDTO } from './schedule.dto';
+export { default as TeacherDTO } from './teacher.dto';
+export { default as UpdateClassroomDTO } from './update_classroom.dto';
+export { default as AttendanceDTO } from './attendance.dto';
+export { default as OrderDTO } from './order.dto';

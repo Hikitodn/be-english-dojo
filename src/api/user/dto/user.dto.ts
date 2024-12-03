@@ -1,11 +1,8 @@
-import { Role } from '@common/types';
+import { Gender } from '@common/types';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class UserDTO {
-  @Expose()
-  id: number;
-
   @Expose()
   email: string;
 
@@ -19,5 +16,20 @@ export class UserDTO {
   avatar_url: string;
 
   @Expose()
-  role: Role;
+  phone_number: string;
+
+  @Expose()
+  date_of_birth: string;
+
+  @Expose()
+  gender: Gender;
+
+  @Expose()
+  address: string;
+
+  @Expose()
+  social_links: Array<string>;
+
+  @Expose()
+  classrooms: Array<string>;
 }

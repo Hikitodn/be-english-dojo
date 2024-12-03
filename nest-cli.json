@@ -5,7 +5,8 @@
   "entryFile": "shared/app/index",
   "compilerOptions": {
     "assets": [
-      { "include": "templates/*.hbs", "watchAssets": true }
+      { "include": "templates/*.hbs", "watchAssets": true },
+      { "include": "i18n/**/*", "watchAssets": true }
     ],
     "deleteOutDir": true
   }

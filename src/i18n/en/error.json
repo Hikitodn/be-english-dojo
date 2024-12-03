@@ -1,0 +1,100 @@
+{
+  "ED-0100": {
+    "error_id": "ED-0100",
+    "error": "Internal Server Error",
+    "message": "An internal server error occurred. Please contact us if the problem is not solved."
+  },
+  "ED-0200": {
+    "error_id": "ED-0200",
+    "error": "Bad Request",
+    "message": "Your browser sent a request that this server could not understand. Please check your request and try again."
+  },
+  "ED-0201": {
+    "error_id": "ED-0201",
+    "error": "Bad Request",
+    "message": "Invalid payment method."
+  },
+  "ED-0202": {
+    "error_id": "ED-0202",
+    "error": "Bad Request",
+    "message": "Something wrong with your payment, please try again."
+  },
+  "ED-0203": {
+    "error_id": "ED-0203",
+    "error": "Bad Request",
+    "message": "We can't find any user with this email."
+  },
+  "ED-0204": {
+    "error_id": "ED-0204",
+    "error": "Bad Request",
+    "message": "Invalid date."
+  },
+  "ED-0205": {
+    "error_id": "ED-0205",
+    "error": "Bad Request",
+    "message": "Student already existed."
+  },
+  "ED-0300": {
+    "error_id": "ED-0300",
+    "error": "Forbidden",
+    "message": "You don't have permission to access this resource."
+  },
+  "ED-0400": {
+    "error_id": "ED-0400",
+    "error": "Not Found",
+    "message": "Sorry, the page you're looking for doesn't exist."
+  },
+  "ED-0500": {
+    "error_id": "ED-0500",
+    "error": "Unauthorized",
+    "message": "You have attempted to access a page for which you are not authorized."
+  },
+  "ED-0501": {
+    "error_id": "ED-0501",
+    "error": "Unauthorized",
+    "message": "Wrong email or password, please try again."
+  },
+  "ED-0502": {
+    "error_id": "ED-0502",
+    "error": "Unauthorized",
+    "message": "You can't login with unverified email."
+  },
+  "ED-0503": {
+    "error_id": "ED-0503",
+    "error": "Unauthorized",
+    "message": "Your login session is expired, please login again."
+  },
+  "ED-0504": {
+    "error_id": "ED-0504",
+    "error": "Unauthorized",
+    "message": "We can't find any account with your credentials."
+  },
+  "ED-0600": {
+    "error_id": "ED-0600",
+    "message": "This field is required."
+  },
+  "ED-0601": {
+    "error_id": "ED-0601",
+    "message": "This field is not valid email format."
+  },
+  "ED-0602": {
+    "error_id": "ED-0602",
+    "message": "Your password should have at least 8 characters with one uppercase and one number."
+  },
+  "ED-0603": {
+    "error_id": "ED-0603",
+    "message": "Email already existed."
+  },
+  "ED-0604": {
+    "error_id": "ED-0604",
+    "message": "This field should be a string."
+  },
+  "ED-0605": {
+    "error_id": "ED-0605",
+    "message": "This field should be a valid date."
+  },
+  "ED-0606": {
+    "error_id": "ED-0606",
+    "message": "This field should be a valid type."
+  }
+}

@@ -18,6 +18,7 @@
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
     "paths": {
       "@configs/*": ["src/shared/infra/environment/*"],
       "@common/*": ["src/shared/common/*"]

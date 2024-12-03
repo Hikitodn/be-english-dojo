@@ -1,9 +1,14 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ISendMailOptions } from '@nestjs-modules/mailer';
 import { JwtService } from '@nestjs/jwt';
 import { MailConfigService } from '@configs/mail/mail.service';
 import { JwtPayload } from '@common/intefaces';
 import { UserRepository } from '../user/user.repository';
+import { convert_ms_to_sec } from '@common/helper';
 
 @Injectable()
 export class MailService {
@@ -16,7 +21,7 @@ export class MailService {
   async generate_mail_data(payload: JwtPayload): Promise<ISendMailOptions> {
     const token = await this.jwtService.signAsync(payload, {
       secret: this.mailConfigService.getMailSecret(),
-      expiresIn: this.mailConfigService.getMailExpireTime(),
+      expiresIn: convert_ms_to_sec(this.mailConfigService.getMailExpireTime()),
     });
 
     return {
@@ -43,8 +48,11 @@ export class MailService {
       throw new UnauthorizedException();
     }
 
-    if (!this.userRepository.find_user_by_id(sub))
-      throw new UnauthorizedException();
+    const user = await this.userRepository.find_user_by_id(sub);
+
+    if (!user) throw new UnauthorizedException();
+
+    if (user.is_verified) throw new BadRequestException();
 
     this.userRepository.update_user_mail_verify(sub);
   }
