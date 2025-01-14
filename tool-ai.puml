@@ -1,0 +1,66 @@
+@startuml Email Queue
+autonumber "#."
+skinparam style strictuml
+skinparam sequenceMessageAlign direction
+
+skinparam sequence {
+    ParticipantBorderColor Maroon
+    ParticipantBackgroundColor BUSINESS
+    LifeLineBorderColor Maroon
+    ArrowColor Maroon
+}
+
+participant User as user
+participant App as app
+participant AppServer as appserver
+participant GroqAI as groqai
+participant PostgreSQL as postgresql
+
+user -> app: upload file
+activate app
+
+app -> appserver: request API Q&A generator
+activate appserver
+
+appserver -> appserver: get file content
+
+appserver -> groqai: request prompt with file content
+activate groqai
+
+groqai --> appserver: return result data
+deactivate groqai
+
+appserver --> app: response result data
+deactivate appserver
+
+app --> user: show result data
+deactivate app
+
+user -> app: submit Q&A data
+activate app
+
+app -> appserver: request API store data to question bank
+activate appserver
+
+appserver -> postgresql: store data
+activate postgresql
+
+    alt System error
+        postgresql --> appserver: return error
+        appserver --> app: response error
+        app --> user: show error
+
+    else Success
+
+        postgresql --> appserver: return success
+        deactivate postgresql
+
+        appserver --> app: response success
+        deactivate appserver
+
+        app --> user: show success message
+        deactivate app
+    end
+
+
+@enduml

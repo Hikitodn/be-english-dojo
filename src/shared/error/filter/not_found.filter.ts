@@ -5,12 +5,10 @@ import {
   ArgumentsHost,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ErrorService } from '../error.service';
+import { I18nContext } from 'nestjs-i18n';
 
 @Catch(NotFoundException)
 export class NotFoundExceptionFilter implements ExceptionFilter {
-  constructor(private readonly errorService: ErrorService) {}
-
   catch(exception: NotFoundException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     //const req = ctx.getRequest<Request>();
@@ -18,7 +16,8 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const errors = exception.getResponse();
     //const stackTrace = exception.stack;
+    const i18n = I18nContext.current(host);
 
-    res.status(status).json(this.errorService.custom_message(errors));
+    res.status(status).json(Object.assign(errors, i18n?.t('error.ED-0400')));
   }
 }

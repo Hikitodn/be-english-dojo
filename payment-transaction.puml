@@ -1,0 +1,89 @@
+@startuml Email Queue
+autonumber "#."
+skinparam style strictuml
+skinparam sequenceMessageAlign direction
+
+skinparam sequence {
+    ParticipantBorderColor Maroon
+    ParticipantBackgroundColor BUSINESS
+    LifeLineBorderColor Maroon
+    ArrowColor Maroon
+}
+
+participant User as user
+participant App as app
+participant AppServer as app_server
+participant PostgreSQL as postgresql
+participant PaypalServer as zalopay_server
+participant PaypalApp as zalopay_app
+
+user -> app: pay tuition fee
+activate app
+app -> app_server: request API create transaction
+activate app_server
+app_server -> postgresql: store transaction data
+activate postgresql
+
+alt System error
+    postgresql --> app_server: return error
+    app_server --> app: response error
+    app --> user: show error
+
+else Success
+    postgresql --> app_server: return success
+    deactivate postgresql
+
+    app_server -> zalopay_server: request Paypal API token
+    activate zalopay_server
+    zalopay_server --> app_server: return token
+    deactivate zalopay_server
+
+    app_server -> zalopay_server: request Paypal API create order with token
+        activate zalopay_server 
+    alt ZaloPay error
+        zalopay_server --> app_server: return error
+        app_server --> app: response error
+        app --> user: show error and cancel transaction
+    else Success
+        zalopay_server --> app_server: return result
+        deactivate zalopay_server
+        note right
+            Order Information
+            - order_id
+        end note
+    end
+
+    app_server --> app: return order info
+
+    app -> zalopay_app: request Paypal app with order info
+    activate zalopay_app
+
+    zalopay_app --> user: show order summary
+
+    user -> zalopay_app: make payment
+
+    alt Cancel Transaction / Payment Error
+        zalopay_app --> app: return error
+        app -> app_server: request API update transaction status
+        app --> user: show error and cancel transaction
+    else Success
+        zalopay_app --> app: return result
+        note right
+            Success Payment Information
+            - payment_redirecturl
+        end note
+        deactivate zalopay_app
+
+        app -> app_server: request API update transaction status
+
+        app_server --> app: response success
+        deactivate app_server
+
+        app --> user: show success message
+        deactivate app
+    end
+end
+
+deactivate app
+
+@enduml

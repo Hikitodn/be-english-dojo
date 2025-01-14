@@ -7,34 +7,34 @@ export class MailConfigService implements IMailConfig {
   constructor(private configService: ConfigService) {}
 
   public getMailHost(): string {
-    return this.configService.getOrThrow<string>('mail.host');
+    return this.configService.getOrThrow('mail.host');
   }
 
   public getMailPort(): number {
-    return this.configService.getOrThrow<number>('mail.port');
+    return +this.configService.getOrThrow('mail.port');
   }
 
   public getMailUsername(): string {
-    return this.configService.getOrThrow<string>('mail.username');
+    return this.configService.getOrThrow('mail.username');
   }
 
   public getMailPassword(): string {
-    return this.configService.getOrThrow<string>('mail.password');
+    return this.configService.getOrThrow('mail.password');
   }
 
   public getMailFrom(): string {
-    return this.configService.getOrThrow<string>('mail.from');
+    return this.configService.getOrThrow('mail.from');
   }
 
   public getMailURL(): string {
-    return this.configService.getOrThrow<string>('mail.url');
+    return this.configService.getOrThrow('mail.url');
   }
 
   public getMailSecret(): string {
-    return this.configService.getOrThrow<string>('mail.secret');
+    return this.configService.getOrThrow('mail.secret');
   }
 
   public getMailExpireTime(): number {
-    return this.configService.getOrThrow<number>('mail.expire_time');
+    return +this.configService.getOrThrow('mail.expire_time');
   }
 }

@@ -8,13 +8,16 @@ import { BadRequestExceptionFilter } from './filter/bad_request.filter';
 import { ForbiddenExceptionFilter } from './filter/forbidden.filter';
 import { NotFoundExceptionFilter } from './filter/not_found.filter';
 import { UnauthorizedExceptionFilter } from './filter/unauthorized.filter';
-import { InternalServerExceptionFilter } from './filter/internal_server_error.filter';
 import { ValidationError } from 'class-validator';
-import { ErrorService } from './error.service';
+import { UnprocessableEntityExceptionFilter } from './filter/unprocess_entity.filter';
+import { AllExceptionFilter } from './filter/all.filter';
 
 @Module({
   providers: [
-    ErrorService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionFilter,
+    },
     {
       provide: APP_FILTER,
       useClass: BadRequestExceptionFilter,
@@ -33,8 +36,9 @@ import { ErrorService } from './error.service';
     },
     {
       provide: APP_FILTER,
-      useClass: InternalServerExceptionFilter,
+      useClass: UnprocessableEntityExceptionFilter,
     },
+
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({

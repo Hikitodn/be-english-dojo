@@ -7,22 +7,18 @@ export class JwtConfigService implements IJwtConfig {
   constructor(private configService: ConfigService) {}
 
   public getAccessTokenSecret(): string {
-    return this.configService.getOrThrow<string>('jwt.access_token_secret');
+    return this.configService.getOrThrow('jwt.access_token_secret');
   }
 
   public getAccessTokenExpireTime(): number {
-    return this.configService.getOrThrow<number>(
-      'jwt.access_token_expire_time',
-    );
+    return +this.configService.getOrThrow('jwt.access_token_expire_time');
   }
 
   public getRefreshTokenSecret(): string {
-    return this.configService.getOrThrow<string>('jwt.refresh_token_secret');
+    return this.configService.getOrThrow('jwt.refresh_token_secret');
   }
 
   public getRefreshTokenExpireTime(): number {
-    return this.configService.getOrThrow<number>(
-      'jwt.refresh_token_expire_time',
-    );
+    return +this.configService.getOrThrow('jwt.refresh_token_expire_time');
   }
 }

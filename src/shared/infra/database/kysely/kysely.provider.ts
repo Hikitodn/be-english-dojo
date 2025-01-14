@@ -17,6 +17,10 @@ export const KyselyProvider: Provider[] = [
           user: databaseOptions.user,
           password: databaseOptions.password,
           database: databaseOptions.database,
+          ssl:
+            process.env.NODE_ENV === 'production'
+              ? { rejectUnauthorized: false, requestCert: true }
+              : false,
         }),
       });
 

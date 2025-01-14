@@ -1,0 +1,42 @@
+@startuml Email Queue
+autonumber "#."
+skinparam style strictuml
+skinparam sequenceMessageAlign direction
+
+skinparam sequence {
+    ParticipantBorderColor Maroon
+    ParticipantBackgroundColor BUSINESS
+    LifeLineBorderColor Maroon
+    ArrowColor Maroon
+}
+
+participant User as user
+participant App as app
+participant AppServer as app_server
+participant PostgreSQL as postgresql
+
+user -> app: pay tuition fee
+activate app
+app -> app_server: request API create transaction
+activate app_server
+app_server -> postgresql: store transaction data
+activate postgresql
+
+alt System error
+    postgresql --> app_server: return error
+    app_server --> app: response error
+    app --> user: show error
+
+else Success
+    postgresql --> app_server: return success
+    deactivate postgresql
+
+    app_server --> app: response success
+    deactivate app_server
+
+    app --> user: show success message
+    deactivate app
+end
+
+
+@enduml

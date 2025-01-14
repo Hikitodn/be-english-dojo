@@ -1,0 +1,65 @@
+@startuml Email Queue
+autonumber "#."
+skinparam style strictuml
+skinparam sequenceMessageAlign direction
+
+skinparam sequence {
+    ParticipantBorderColor Maroon
+    ParticipantBackgroundColor BUSINESS
+    LifeLineBorderColor Maroon
+    ArrowColor Maroon
+}
+
+participant User as user
+participant App as app
+participant AppServer as app_server
+participant PostgreSQL as postgresql
+participant EmailQueue as email_queue
+
+user -> app: register account
+note left
+    Account Information
+    - email
+    - password
+    - first_name
+    - last_name
+    - phone_number
+    - date_of_birth
+    - gender
+end note
+
+activate app
+
+app -> app_server: request to create account
+
+activate app_server
+
+app_server -> app_server: validate data
+
+alt Invalid data
+    app_server --> app: response error
+    app --> user: show error
+else Valid data
+    app_server -> postgresql: store account data
+    activate postgresql
+
+    alt System error
+        postgresql --> app_server: return error
+        app_server --> app: response error
+        app --> user: show error
+
+    else Success
+        postgresql --> app_server: return success
+        deactivate postgresql
+        app_server -> email_queue: send email-sending job
+        activate email_queue
+        email_queue -> email_queue: process email-sending job
+        deactivate email_queue
+        app_server --> app: response success
+        deactivate app_server
+        app --> user: show success message and \nredirect to login page
+        deactivate app
+    end
+end
+
+@enduml
